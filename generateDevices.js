@@ -1,25 +1,31 @@
 function generateDevices() {
     devices = [];
     const deviceNames = Object.keys(DEVICE_MAPPING);
-    
-    for (let i = 0; i < 24; i++) {
-        const deviceName = deviceNames[i];
-        const deviceType = DEVICE_MAPPING[deviceName];
-        const location = LOCATIONS[Math.floor(Math.random() * LOCATIONS.length)];
-        
-        const device = {
-            id: i + 1,
-            deviceName,
-            deviceType,
-            location,
-            alerted: false,
-            lastUpdate: new Date(),
-            isUpdating: false,
-            ...generateRealisticParameters(deviceType)
-        };
-        
-        devices.push(device);
-    }
-    
-    console.log('Generated 24 medical devices with realistic parameters');
+
+    const DEVICES_PER_LOCATION = 5; // tweak this number to scale up/down
+    let idCounter = 1;
+
+    LOCATIONS.forEach((location, locIndex) => {
+        for (let i = 0; i < DEVICES_PER_LOCATION; i++) {
+            // Cycle through the known device names
+            const deviceName = deviceNames[(idCounter - 1) % deviceNames.length];
+            const deviceType = DEVICE_MAPPING[deviceName];
+
+            const device = {
+                id: idCounter,
+                deviceName,
+                deviceType,
+                location,
+                alerted: false,
+                lastUpdate: new Date(),
+                isUpdating: false,
+                ...generateRealisticParameters(deviceType)
+            };
+
+            devices.push(device);
+            idCounter++;
+        }
+    });
+
+    console.log(`Generated ${devices.length} medical devices across ${LOCATIONS.length} locations`);
 }
